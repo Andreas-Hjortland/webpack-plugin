@@ -163,45 +163,6 @@ class AureliaWebpackPlugin {
         console.error('No context elements');
       }
 
-      function customWebpackRequire(moduleId) {
-        // Check if module is in cache
-        if(installedModules[moduleId])
-          return installedModules[moduleId].exports;
-
-        // Create a new module (and put it into the cache)
-        var module = installedModules[moduleId] = {
-          i: moduleId,
-          l: false,
-          exports: {}
-        };
-
-        // Try adding .js / .ts
-        if (!modules[moduleId] && typeof moduleId === 'string') {
-          var newModuleId;
-          if (modules[newModuleId = moduleId + '.js'] || modules[newModuleId = moduleId + '.ts']) {
-            moduleId = newModuleId;
-            // alias also installedModules:
-            installedModules[moduleId] = module;
-          }
-        }
-
-        // Execute the module function
-        modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
-        // Flag the module as loaded
-        module.l = true;
-
-        // Return the exports of the module
-        return module.exports;
-      }
-
-      compilation.mainTemplate.plugin('require', function(source, chunk, hash) {
-        let newSourceArray = customWebpackRequire.toString().split('\n');
-        newSourceArray.pop(); // remove header 'function... {'
-        newSourceArray.shift(); // remove footer '}'
-        return newSourceArray.join('\n');
-      });
-
       compilation.plugin('before-module-ids', function (modules) {
         modules.forEach((module) => {
           if (module.id !== null) {
