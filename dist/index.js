@@ -218,38 +218,6 @@ var AureliaWebpackPlugin = function () {
         console.error('No context elements');
       }
 
-      function customWebpackRequire(moduleId) {
-        if (installedModules[moduleId]) return installedModules[moduleId].exports;
-
-        var module = installedModules[moduleId] = {
-          i: moduleId,
-          l: false,
-          exports: {}
-        };
-
-        if (!modules[moduleId] && typeof moduleId === 'string') {
-          var newModuleId;
-          if (modules[newModuleId = moduleId + '.js'] || modules[newModuleId = moduleId + '.ts']) {
-            moduleId = newModuleId;
-
-            installedModules[moduleId] = module;
-          }
-        }
-
-        modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
-        module.l = true;
-
-        return module.exports;
-      }
-
-      compilation.mainTemplate.plugin('require', function (source, chunk, hash) {
-        var newSourceArray = customWebpackRequire.toString().split('\n');
-        newSourceArray.pop();
-        newSourceArray.shift();
-        return newSourceArray.join('\n');
-      });
-
       compilation.plugin('before-module-ids', function (modules) {
         modules.forEach(function (module) {
           if (module.id !== null) {
